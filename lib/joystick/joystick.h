@@ -1,14 +1,8 @@
-#ifndef _JOYSTICK_
-#define _JOYSTICK_
+#pragma once
 
 #include <Arduino.h>
-#include "ControllerConstants.h"
+#include "ControllerConfig.h"
 
-typedef struct JoystickData{
-    int x_processed = 0;
-    int y_processed = 0;
-    bool isPressed = false;
-};
 
 
 class c_Joystick{
@@ -42,4 +36,3 @@ private:
 };
 
 
-#endif
