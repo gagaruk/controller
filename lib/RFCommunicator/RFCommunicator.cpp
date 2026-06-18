@@ -1,4 +1,4 @@
-#include "communicator.h"
+#include "RFCommunicator.h"
 
 c_RFcommunicator::c_RFcommunicator(uint8_t ce, uint8_t cns, int baudrate, int transInterval) : _radio(ce,cns), _baudrate(baudrate), _transInterval(transInterval){
     _prevTrans_t = 0;

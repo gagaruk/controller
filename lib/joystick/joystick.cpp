@@ -48,15 +48,15 @@ int c_Joystick::_meanSample(uint8_t sensPin){
     int sum = 0;
     int start_t = millis();
 
-    for(int sampleCount= 0; sampleCount<joystickConstants::operationalConstants::maxSampleCount; sampleCount++){
+    for(int sampleCount= 0; sampleCount<JoystickConstants::operationalConstants::maxSampleCount; sampleCount++){
 
         sum+= constrain(analogRead(sensPin), _lowerLimit, _higherLimit);
-        if(millis()-start_t > joystickConstants::operationalConstants::maxSampleDuration){
+        if(millis()-start_t > JoystickConstants::operationalConstants::maxSampleDuration){
             return int(sum/sampleCount);
         }
     }
 
-    return int(sum/joystickConstants::operationalConstants::maxSampleCount);
+    return int(sum/JoystickConstants::operationalConstants::maxSampleCount);
 
 }
 
