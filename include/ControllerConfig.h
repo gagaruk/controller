@@ -1,6 +1,7 @@
 #pragma once
 #include <Arduino.h>
 #include "LogBuffer.h"
+#include <WiFi.h>
 
 extern c_logBuffer logBuffer;
 
@@ -132,3 +133,19 @@ namespace ButtonArray{
         constexpr uint16_t MASK_R1       = (1 << 5); 
     }
 }
+
+typedef struct ButtonData{
+    bool x;
+    bool circle;
+    bool triangle;
+    bool square;
+    bool l1;
+    bool r1;
+};
+
+typedef struct PeripheralPacket{
+    JoystickData joy1;
+    JoystickData joy2;
+    ButtonData buttArr;
+    uint16_t potVal;
+};

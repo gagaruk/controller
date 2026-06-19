@@ -35,3 +35,29 @@ bool c_buttonArray::isJustPressed(uint16_t buttonMask) const {
 
     return ((_currentStates & buttonMask) != 0) && ((_previousStates & buttonMask) == 0);
 }
+
+ButtonData c_buttonArray::getPressedStruct()const{
+    ButtonData data;
+    data.x = isPressed(ButtonArray::masks::MASK_X);
+    data.circle = isPressed(ButtonArray::masks::MASK_CIRCLE);
+    data.triangle = (ButtonArray::masks::MASK_TRIANGLE);
+    data.square = isPressed(ButtonArray::masks::MASK_SQUARE);
+    data.l1 = isPressed(ButtonArray::masks::MASK_L1);
+    data.r1 = isPressed(ButtonArray::masks::MASK_R1);
+
+    return data;
+
+}
+
+ButtonData c_buttonArray::getJustPressedStruct() const{
+    ButtonData data;
+    data.x = isJustPressed(ButtonArray::masks::MASK_X);
+    data.circle = isJustPressed(ButtonArray::masks::MASK_CIRCLE);
+    data.triangle = (ButtonArray::masks::MASK_TRIANGLE);
+    data.square = isJustPressed(ButtonArray::masks::MASK_SQUARE);
+    data.l1 = isJustPressed(ButtonArray::masks::MASK_L1);
+    data.r1 = isJustPressed(ButtonArray::masks::MASK_R1);
+
+    return data;
+
+}
