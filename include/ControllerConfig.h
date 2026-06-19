@@ -104,3 +104,11 @@ namespace LoRaConstants{
         constexpr int FREQ = 0;
     }
 }
+
+namespace EspNowConstants{
+    constexpr uint8_t BROADCAST_ADDRESS[] = {0xE4, 0x65, 0xB8, 0xD8, 0x9C, 0x60};
+    constexpr int WIFI_CHANNEL = 1;
+    constexpr wifi_interface_t WIFI_INTERFACE = WIFI_IF_STA;
+    constexpr uint8_t WIFI_PROTOCOL = WIFI_PROTOCOL_LR;
+    constexpr wifi_power_t TX_POWER = WIFI_POWER_19_5dBm;
+}

@@ -1,4 +1,4 @@
-#include "LoRaCommunicator.h"
+#include "LoRaManager.h"
 #include "ControllerConfig.h"
 #include <LoRa.h>
 
