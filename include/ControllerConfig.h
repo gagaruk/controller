@@ -116,31 +116,25 @@ namespace EspNowConstants{
 
 namespace ButtonArray{
     namespace pins{
-        constexpr uint8_t BTN_X        = 13;
-        constexpr uint8_t BTN_CIRCLE   = 12;
-        constexpr uint8_t BTN_TRIANGLE = 14;
-        constexpr uint8_t BTN_SQUARE   = 27;
-        constexpr uint8_t BTN_L1       = 26;
-        constexpr uint8_t BTN_R1       = 25;
+        constexpr uint8_t L1= 13;
+        constexpr uint8_t L2 = 12;
+        constexpr uint8_t R1 = 14;
+        constexpr uint8_t R2 = 27;
     }
 
     namespace masks {
-        constexpr uint16_t MASK_X        = (1 << 0); 
-        constexpr uint16_t MASK_CIRCLE   = (1 << 1); 
-        constexpr uint16_t MASK_TRIANGLE = (1 << 2); 
-        constexpr uint16_t MASK_SQUARE   = (1 << 3); 
-        constexpr uint16_t MASK_L1       = (1 << 4);
-        constexpr uint16_t MASK_R1       = (1 << 5); 
+        constexpr uint16_t L1       = (1 << 0); 
+        constexpr uint16_t L2   = (1 << 1); 
+        constexpr uint16_t R1 = (1 << 2); 
+        constexpr uint16_t R2   = (1 << 3); 
     }
 }
 
 typedef struct ButtonData{
-    bool x;
-    bool circle;
-    bool triangle;
-    bool square;
     bool l1;
+    bool l2;
     bool r1;
+    bool r2;
 };
 
 typedef struct PeripheralPacket{

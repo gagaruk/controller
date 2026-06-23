@@ -2,15 +2,9 @@
 
 #include <Arduino.h>
 
-class c_buttonArray {
-private:
-    uint16_t _currentStates = 0;
-    uint16_t _previousStates = 0;
-    
-    unsigned long _lastDebounceTime = 0;
-    const unsigned long DEBOUNCE_DELAY = 10; // 10ms
-
+class c_ButtonArray {
 public:
+    c_ButtonArray();
     void init();
     void update();
 
@@ -19,4 +13,10 @@ public:
 
     ButtonData getPressedStruct()const;
     ButtonData getJustPressedStruct() const;
+private:
+    uint16_t _currentStates = 0;
+    uint16_t _previousStates = 0;
+    
+    unsigned long _lastDebounceTime = 0;
+    const unsigned long DEBOUNCE_DELAY = 10;
 };

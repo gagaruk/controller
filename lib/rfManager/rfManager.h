@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ControllerConfig.h"
+
 #include <RF24.h>
 #include <nRF24L01.h>
 
@@ -9,11 +11,9 @@ public:
     void init(byte writingAddress, byte readingAddress);
     void disableComms();
 
-    void logSensorVals(const int*data, int size);
-    void logTelemetry(double error);
+    void sendPeripheral(const PeripheralPacket& packet);
+    bool recieveTelemetry(TelemetryPacket &packet);
     
-    bool checkNewPIDConstants(double &kp, double &ki,double &kd);
-
 private:
     RF24 _radio;
     uint8_t _ce, _cns;

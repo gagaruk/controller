@@ -23,7 +23,7 @@ bool c_RadioManager::begin(){
     return true;
 }
 
-bool c_RadioManager::transmitPacket(const JoystickData& packet){
+bool c_RadioManager::transmitPacket(const PeripheralPacket& packet){
     int status = LoRa.beginPacket();
 
     if(status==9){

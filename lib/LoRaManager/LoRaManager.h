@@ -7,7 +7,7 @@ class c_RadioManager{
 public:
     c_RadioManager(uint8_t csPin, uint8_t resetPin, uint8_t irqPin, long freq);
     bool begin();
-    bool transmitPacket(const JoystickData& packet);
+    bool transmitPacket(const PeripheralPacket& packet);
     bool recievePacket(TelemetryPacket& data);
 private:
     uint8_t _csPin = 0;
