@@ -2,6 +2,12 @@
 
 c_PeripheralManager::c_PeripheralManager(c_Joystick *joy1, c_Joystick *joy2, c_ButtonArray *buttArr, uint8_t potPin):
     _joy1(joy1), _joy2(joy2), _buttArr(buttArr), _potPin(potPin) {}
+    
+void c_PeripheralManager::init() {
+    _joy1->init();
+    _joy2->init();
+    _buttArr->init();
+}
 
 void c_PeripheralManager::updateVals() {
     _joy1->update();

@@ -7,6 +7,7 @@
 class c_PeripheralManager{
 public:
     c_PeripheralManager(c_Joystick *joy1, c_Joystick *joy2, c_ButtonArray *buttArr, uint8_t potPin);
+    void init();
     void updateVals();
     PeripheralPacket getVals();
 private:
