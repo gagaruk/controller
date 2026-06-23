@@ -18,5 +18,4 @@ private:
     uint16_t _previousStates = 0;
     
     unsigned long _lastDebounceTime = 0;
-    const unsigned long DEBOUNCE_DELAY = 10;
 };

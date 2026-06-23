@@ -128,6 +128,8 @@ namespace ButtonArray{
         constexpr uint16_t R1 = (1 << 2); 
         constexpr uint16_t R2   = (1 << 3); 
     }
+
+    constexpr int DEBOUNCE_DELAY = 10;
 }
 
 typedef struct ButtonData{

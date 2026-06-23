@@ -10,7 +10,7 @@ void c_ButtonArray::init() {
 }
 
 void c_ButtonArray::update() {
-    if (millis() - _lastDebounceTime < DEBOUNCE_DELAY) return;
+    if (millis() - _lastDebounceTime < ButtonArray::DEBOUNCE_DELAY) return;
     _lastDebounceTime = millis();
 
     _previousStates = _currentStates;
