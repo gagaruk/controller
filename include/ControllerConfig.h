@@ -20,6 +20,8 @@ extern c_logBuffer logBuffer;
     #define LOG_ERROR(fmt, ...)  _LOG_WRITE("ERROR", fmt, ##__VA_ARGS__)
 
     #define LOG_JOYSTICK(x, y)   _LOG_WRITE("JOY",   "X: %d | Y: %d", x, y)
+    #define LOG_BUTTONS(l1, l2, r1, r2) _LOG_WRITE("BUTTONS", "L1: %d | L2: %d | R1: %d | R2: %d", l1, l2, r1, r2)
+    #define LOG_POT(val) _LOG_WRITE("POT", "Value: %d", val)
     #define LOG_RADIO(fmt, ...)  _LOG_WRITE("RADIO", fmt, ##__VA_ARGS__)
 #else
 
@@ -27,6 +29,8 @@ extern c_logBuffer logBuffer;
     #define LOG_INFO(fmt, ...) do {} while(0)
     #define LOG_ERROR(fmt, ...) do {} while(0)
     #define LOG_JOYSTICK(x, y) do {} while(0)
+    #define LOG_BUTTONS(l1, l2, r1, r2) do {} while(0)
+    #define LOG_POT(val) do {} while(0)
     #define LOG_RADIO(fmt, ...) do {} while(0)
 #endif
 
