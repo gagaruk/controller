@@ -29,7 +29,7 @@ void test_rf24_disable_comms(void)
 void test_rf24_send_interval_limit(void)
 {
     rf.init(WRITE_ADDR, READ_ADDR);
-    PeripheralPacket packet = {0};
+    PeripheralPacket packet = {};
 
     // First send should update _prevTrans_t
     rf.sendPeripheral(packet);
