@@ -92,7 +92,7 @@ namespace JoystickConstants
     namespace operationalConstants
     {
         constexpr int DEADBAND = 10;
-        constexpr float FILTER_ALPHA = 0.1;
+        constexpr float FILTER_ALPHA = 0.5;
         constexpr float EXPO_FACTOR = 0.2;
         constexpr int MAX_SAMPLE_COUNT = 16;
         constexpr int MAX_SAMPLE_DURATION = 50;
@@ -199,7 +199,6 @@ namespace imuConstants
     static constexpr uint8_t MPU_ADDR = 0x68;
 
     static constexpr uint8_t POWER_ADDR = 0x6B;
-    static constexpr uint8_t MAG_ADDR = 0x1E;
     static constexpr uint8_t CONFIG_ADDR = 0x1A;
 
     enum class GYRO_RANGE
@@ -239,7 +238,6 @@ struct IMUData
 {
     vector3 gyro;
     vector3 accel;
-    vector3 mag;
 };
 
 struct PeripheralPacket
@@ -266,6 +264,7 @@ namespace loopConstants
 
 namespace displayConstants
 {
+    static constexpr int REFRESH_INTERVAL_MS = 100;
     static constexpr int SCREEN_WIDTH = 128;
     static constexpr int SCREEN_HEIGHT = 64;
 }
