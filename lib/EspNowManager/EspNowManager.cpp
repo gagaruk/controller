@@ -4,10 +4,10 @@
 c_EspNowManager::c_EspNowManager() {}
 
 
-bool c_EspNowManager::init(uint8_t wifiChannel) {
+bool c_EspNowManager::init(uint8_t wifiChannel, const uint8_t* targetMac) {
     WiFi.mode(WIFI_STA);
     
-    esp_wifi_set_channel(EspNowConstants::WIFI_CHANNEL, WIFI_SECOND_CHAN_NONE);
+    esp_wifi_set_channel(wifiChannel, WIFI_SECOND_CHAN_NONE);
     esp_wifi_set_protocol(EspNowConstants::WIFI_INTERFACE, EspNowConstants::WIFI_PROTOCOL);
 
     WiFi.setTxPower(EspNowConstants::TX_POWER);
@@ -18,6 +18,8 @@ bool c_EspNowManager::init(uint8_t wifiChannel) {
 
     esp_now_register_send_cb(c_EspNowManager::_onDataSent);
     esp_now_register_recv_cb(c_EspNowManager::_onDataRecv);
+    
+    while(!_registerPeer(targetMac));
 
     return true;
 }
@@ -27,6 +29,7 @@ bool c_EspNowManager::_registerPeer(const uint8_t* macAddress) {
         return true; 
     }
 
+    LOG_ERROR("Peer not found, adding peer...");
     esp_now_peer_info_t peerInfo = {};
     memcpy(peerInfo.peer_addr, macAddress, 6);
     peerInfo.channel = 0;
@@ -66,13 +69,22 @@ void c_EspNowManager::_onDataRecv(const uint8_t* mac_addr, const uint8_t* incomi
     _newDataAvailable = true;
 }
 
-bool c_EspNowManager::recieveData(TelemetryPacket& packet){
-    if(!_newDataAvailable) return false;
+bool c_EspNowManager::recievedData(TelemetryPacket& packet){
+    portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
+    portENTER_CRITICAL(&timerMux);
+    
+    if(!_newDataAvailable) {
+        portEXIT_CRITICAL(&timerMux);
+        return false;
+    }
 
     packet = _latestPacket;
     _newDataAvailable = false;
+    
+    portEXIT_CRITICAL(&timerMux);
     return true;
 }
+
 
 
 String c_EspNowManager::getMacAddress(){

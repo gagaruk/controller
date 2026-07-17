@@ -8,9 +8,9 @@ class c_EspNowManager{
 public:
     c_EspNowManager();
     String getMacAddress();
-    bool init(uint8_t wifiChannel);
+    bool init(uint8_t wifiChannel, const uint8_t* targetMac);
     bool sendData(const uint8_t* targetMac, const uint8_t* data, size_t length);
-    bool recieveData(TelemetryPacket& packet);
+    bool recievedData(TelemetryPacket& packet);
 private:
     bool _registerPeer(const uint8_t* targetMac);
     static void _onDataSent(const uint8_t* mac_addr, esp_now_send_status_t status);
