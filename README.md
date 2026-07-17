@@ -21,3 +21,23 @@ can be found in [BOM.csv](bom.csv)
     -> ControllerConfig.h 
             - TelemetryPackage   (recieved)
             - PeripheralPackage  (sent)
+
+## Building Your own (Tips and experience)
+
+1. $\color{red}{\text{Start With Breadboard}}$ and test the connections
+
+2. Make or look to use this schematic
+
+3. Wire them on the breadboard $\color{red}{\text{one by one}}$
+    *Changing hardware and making new connections get impossible later on
+        -> I cant fix the broken IMU because its under the esp32
+
+4. Remember $\color{red}{\text{schematic is reversed }}$ if you're soldering from the back of the board
+    -Needed to solder everything once again
+
+5. But extra of the little parts like capacitors -> easy to loose
+6. After soldering check if the system works as a whole with code
+7. Write the test while programming the rest.
+8. If you want to use it for a variety of projects. Build a moduler structure with classes.
+
+Tip: A break might help you shift perspectives sometimes.
