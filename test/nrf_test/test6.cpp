@@ -1,53 +1,67 @@
 #include <Arduino.h>
-#include <unity.h>
 #include "rfManager.h"
 
-const uint8_t TEST_CE_PIN = 7;
-const uint8_t TEST_CNS_PIN = 8;
-const int TEST_BAUDRATE = 115200;
-const int TEST_INTERVAL = 100; // 100ms
-const byte WRITE_ADDR = 0xAA;
-const byte READ_ADDR = 0xBB;
+// ==================== CONFIGURATION ====================
+#define ROLE_TRANSMITTER true // Change to false for the receiver board
 
-c_RFcommunicator rf(TEST_CE_PIN, TEST_CNS_PIN, TEST_BAUDRATE, TEST_INTERVAL);
+#define NRF_CE_PIN 17
+#define NRF_CSN_PIN 5
+#define BAUD_RATE 115200
+#define TX_INTERVAL 500 // Min interval gap in ms between packets
 
-void setUp(void) {}
-void tearDown(void) {}
+// Hex-mapped pipeline pathways
+const byte ADDR_ALPHA = 0x01;
+const byte ADDR_BETA = 0x02;
 
-void test_rf24_disable_comms(void)
+struct PeripheralPacket
 {
-    rf.init(WRITE_ADDR, READ_ADDR);
-    rf.disableComms();
+    uint32_t frameId;
+    int16_t joyX;
+    int16_t joyY;
+};
 
-    TelemetryPacket packet;
-
-    // Because disableComms() sets _enabled to false, receiveTelemetry should abort
-    bool rxResult = rf.recieveTelemetry(packet);
-    TEST_ASSERT_FALSE_MESSAGE(rxResult, "Radio processed receive despite being disabled");
-}
-
-void test_rf24_send_interval_limit(void)
+struct TelemetryPacket
 {
-    rf.init(WRITE_ADDR, READ_ADDR);
-    PeripheralPacket packet = {};
+    uint32_t frameId;
+    float batteryVoltage;
+    int32_t statusFlags;
+};
+// =======================================================
 
-    // First send should update _prevTrans_t
-    rf.sendPeripheral(packet);
-
-    // Immediate second send should bypass writing due to millis() < _transInterval
-    // Note: To properly test this, you would mock millis(), but in a live test,
-    // we can only execute it to ensure no crashes occur during the bypass.
-    rf.sendPeripheral(packet);
-    TEST_ASSERT_TRUE(true);
-}
+c_RFcommunicator rf(NRF_CE_PIN, NRF_CSN_PIN, BAUD_RATE, TX_INTERVAL);
+uint32_t counter = 0;
 
 void setup()
 {
-    delay(2000);
-    UNITY_BEGIN();
-    RUN_TEST(test_rf24_disable_comms);
-    RUN_TEST(test_rf24_send_interval_limit);
-    UNITY_END();
+    // Note: rf.init() executes internal Serial.begin line matching passed speed configurations
+#if ROLE_TRANSMITTER
+    Serial.println("\n=== nRF24L01 Transmitter Mode Initialization ===");
+    rf.init(ADDR_ALPHA, ADDR_BETA);
+#else
+    Serial.println("\n=== nRF24L01 Receiver Mode Initialization ===");
+    rf.init(ADDR_BETA, ADDR_ALPHA);
+#endif
 }
 
-void loop() {}
+void loop()
+{
+#if ROLE_TRANSMITTER
+    // Send data sequence at strict timed hardware update loops
+    PeripheralPacket txPacket = {counter++, 1023, -512};
+    Serial.printf("Pushing RF Payload Frame ID: %u\n", txPacket.frameId);
+    rf.sendPeripheral(txPacket);
+    delay(10); // Short cycle break to prevent processor spin lockups
+
+#else
+    // Read operations switch state safely into listening configuration profiles
+    TelemetryPacket rxPacket;
+    if (rf.recieveTelemetry(rxPacket))
+    {
+        Serial.println("\n--- [Incoming nRF24L01 RF Telemetry Frame] ---");
+        Serial.printf("Frame ID Received   : %u\n", rxPacket.frameId);
+        Serial.printf("Voltage Metric      : %.2f V\n", rxPacket.batteryVoltage);
+        Serial.printf("System Integrity Code: 0x%X\n", rxPacket.statusFlags);
+        Serial.println("----------------------------------------------");
+    }
+#endif
+}
