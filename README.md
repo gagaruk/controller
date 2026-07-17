@@ -14,13 +14,13 @@ can be found in [BOM.csv](bom.csv)
 
 ## Code- how to approach
 
-1.Use the classes in the lib to build your own functionalities based on the task
-2. Tests are for testing the hardware
-3. ControllerConfig.h hosts all the necessary constants and settings.
-4. To change value recieved / sent change:
-    -> ControllerConfig.h 
-            - TelemetryPackage   (recieved)
-            - PeripheralPackage  (sent)
+1. Use the classes in the lib to build your own functionalities based on the task\
+2. Tests are for testing the hardware\
+3. ControllerConfig.h hosts all the necessary constants and settings.\
+4. To change value recieved / sent change:\
+    -> ControllerConfig.h \
+            - TelemetryPackage   (recieved)\
+            - PeripheralPackage  (sent)\
 
 ## Building Your own (Tips and experience)
 
