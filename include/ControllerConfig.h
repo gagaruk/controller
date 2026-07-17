@@ -210,3 +210,64 @@ namespace SliderConstants
     constexpr int MIN = 0;
     constexpr int MAX = 4095;
 }
+
+namespace imuConstants
+{
+    static constexpr uint8_t MPU_ADDR = 0x68;
+
+    static constexpr uint8_t POWER_ADDR = 0x6B;
+    static constexpr uint8_t MAG_ADDR = 0x1E;
+    static constexpr uint8_t CONFIG_ADDR = 0x1A;
+
+    enum class GYRO_RANGE
+    {
+        DEG_250,
+        DEG_500,
+        DEG_1000,
+        DEG_2000
+    };
+    enum class ACCEL_RANGE
+    {
+        G_2,
+        G_4,
+        G_8,
+        G_16
+    };
+    enum class DLPF_FREQ
+    {
+        HZ_256,
+        HZ_188,
+        HZ_98,
+        HZ_42,
+        HZ_20,
+        HZ_10,
+        HZ_5
+    };
+
+    struct vector3
+    {
+        float x;
+        float y;
+        float z;
+    };
+
+    typedef struct IMUData
+    {
+        vector3 gyro;
+        vector3 accel;
+        vector3 mag;
+    } IMUData_t;
+}
+
+namespace i2cConstants
+{
+    static constexpr uint8_t SDA = 26;
+    static constexpr uint8_t SCL = 25;
+    static constexpr unsigned long CLOCK_SPEED = 400000;
+}
+
+namespace loopConstants
+{
+    static constexpr uint FAST_LOOP_TIME_us = 10000;
+    static constexpr uint SLOW_LOOP_TIME_us = 50000;
+}
