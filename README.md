@@ -20,7 +20,7 @@ can be found in [BOM.csv](bom.csv)
 4. To change value recieved / sent change:\
     -> ControllerConfig.h \
             - TelemetryPackage   (recieved)\
-            - PeripheralPackage  (sent)\
+            - PeripheralPackage  (sent)
 
 ## Building Your own (Tips and experience)
 
