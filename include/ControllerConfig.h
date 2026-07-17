@@ -9,58 +9,91 @@ extern c_logBuffer logBuffer;
 #define CONTROLLER_DEBUG 1
 
 #if CONTROLLER_DEBUG
-    #define _LOG_WRITE(tag, fmt, ...) do { \
-        char _local_msg_buf[128]; \
+#define _LOG_WRITE(tag, fmt, ...)                                                          \
+    do                                                                                     \
+    {                                                                                      \
+        char _local_msg_buf[128];                                                          \
         snprintf(_local_msg_buf, sizeof(_local_msg_buf), "[" tag "] " fmt, ##__VA_ARGS__); \
-        logBuffer.push(_local_msg_buf); \
-    } while(0)
+        logBuffer.push(_local_msg_buf);                                                    \
+    } while (0)
 
-    #define LOG_INIT(fmt, ...)   _LOG_WRITE("INIT",  fmt, ##__VA_ARGS__)
-    #define LOG_INFO(fmt, ...)   _LOG_WRITE("INFO",  fmt, ##__VA_ARGS__)
-    #define LOG_ERROR(fmt, ...)  _LOG_WRITE("ERROR", fmt, ##__VA_ARGS__)
+#define LOG_INIT(fmt, ...) _LOG_WRITE("INIT", fmt, ##__VA_ARGS__)
+#define LOG_INFO(fmt, ...) _LOG_WRITE("INFO", fmt, ##__VA_ARGS__)
+#define LOG_ERROR(fmt, ...) _LOG_WRITE("ERROR", fmt, ##__VA_ARGS__)
 
-    #define LOG_JOYSTICK(x, y)   _LOG_WRITE("JOY",   "X: %d | Y: %d", x, y)
-    #define LOG_BUTTONS(l1, l2, r1, r2) _LOG_WRITE("BUTTONS", "L1: %d | L2: %d | R1: %d | R2: %d", l1, l2, r1, r2)
-    #define LOG_POT(val) _LOG_WRITE("POT", "Value: %d", val)
-    #define LOG_RADIO(fmt, ...)  _LOG_WRITE("RADIO", fmt, ##__VA_ARGS__)
+#define LOG_JOYSTICK(x, y) _LOG_WRITE("JOY", "X: %d | Y: %d", x, y)
+#define LOG_BUTTONS(W, A, S, D, X) _LOG_WRITE("BUTTONS", "W: %d | A: %d | S: %d | D: %d | X: %d", W, A, S, D, X)
+#define LOG_SWITCH(state) _LOG_WRITE("SWITCH", "State: %d", state)
+#define LOG_RADIO(fmt, ...) _LOG_WRITE("RADIO", fmt, ##__VA_ARGS__)
+#define LOG_TELEMETRY(gyro_x, gyro_y, gyro_z, accel_x, accel_y, accel_z, height, heading, batteryVoltage, rssi, errorCode)                                     \
+    _LOG_WRITE("TELEMETRY", "Gyro: [%.2f, %.2f, %.2f] | Accel: [%.2f, %.2f, %.2f] | Height: %.2f | Heading: %.2f | Battery: %.2f | RSSI: %d | Error Code: %d", \
+               gyro_x, gyro_y, gyro_z, accel_x, accel_y, accel_z, height, heading, batteryVoltage, rssi, errorCode)
 #else
 
-    #define LOG_INIT(fmt, ...) do {} while(0)
-    #define LOG_INFO(fmt, ...) do {} while(0)
-    #define LOG_ERROR(fmt, ...) do {} while(0)
-    #define LOG_JOYSTICK(x, y) do {} while(0)
-    #define LOG_BUTTONS(l1, l2, r1, r2) do {} while(0)
-    #define LOG_POT(val) do {} while(0)
-    #define LOG_RADIO(fmt, ...) do {} while(0)
+#define LOG_INIT(fmt, ...) \
+    do                     \
+    {                      \
+    } while (0)
+#define LOG_INFO(fmt, ...) \
+    do                     \
+    {                      \
+    } while (0)
+#define LOG_ERROR(fmt, ...) \
+    do                      \
+    {                       \
+    } while (0)
+#define LOG_JOYSTICK(x, y) \
+    do                     \
+    {                      \
+    } while (0)
+#define LOG_BUTTONS(l1, l2, r1, r2) \
+    do                              \
+    {                               \
+    } while (0)
+#define LOG_SWITCH(state) \
+    do                    \
+    {                     \
+    } while (0)
+#define LOG_RADIO(fmt, ...) \
+    do                      \
+    {                       \
+    } while (0)
+#define LOG_TELEMETRY(gyro_x, gyro_y, gyro_z, accel_x, accel_y, accel_z, height, heading, batteryVoltage, rssi, errorCode) \
+    do                                                                                                                     \
+    {                                                                                                                      \
+    } while (0)
 #endif
 
-
-namespace Loggerconstants{
+namespace Loggerconstants
+{
     constexpr int BUFFERS_SIZE = 0;
     constexpr int INTERVAL = 0;
 }
 
 ////////////////////////////////////// Joystick /////////////////////////////////////////////////
 
-typedef struct JoystickData{
+typedef struct JoystickData
+{
     int x_processed = 0;
     int y_processed = 0;
     bool isPressed = false;
 };
 
+namespace JoystickConstants
+{
+    namespace pins
+    {
+        constexpr uint8_t JOY1_X = 36;
+        constexpr uint8_t JOY1_Y = 39;
+        constexpr uint8_t JOY1_S = 0;
 
-namespace JoystickConstants{
-    namespace pins{
-        constexpr uint8_t JOY1_X = 0;
-        constexpr uint8_t JOY1_Y = 0;
-        constexpr uint8_t JOY1_S = 0;
-        
-        constexpr uint8_t JOY1_X = 0;
-        constexpr uint8_t JOY1_Y = 0;
-        constexpr uint8_t JOY1_S = 0;
+        constexpr uint8_t JOY2_X = 34;
+        constexpr uint8_t JOY2_Y = 35;
+        constexpr uint8_t JOY2_S = 0;
     }
 
-    namespace operationalConstants{
+    namespace operationalConstants
+    {
         constexpr int DEADBAND = 0;
         constexpr float FILTER_ALPHA = 0;
         constexpr float EXPO_FACTOR = 0;
@@ -71,7 +104,8 @@ namespace JoystickConstants{
 
 //////////////////////////////////////////// Serial Coms ////////////////////////////////////////////////////////
 
-struct OdometryData{
+struct OdometryData
+{
     double gyro_x;
     double gyro_y;
     double gyro_z;
@@ -84,25 +118,29 @@ struct OdometryData{
     double heading;
 };
 
-struct SystemStatus{
+struct SystemStatus
+{
     float batteryVoltage;
     uint8_t rssi;
     uint8_t errorCode;
 };
 
-typedef struct TelemetryPacket{
+typedef struct TelemetryPacket
+{
     OdometryData odometry;
     SystemStatus status;
-}__attribute__((packed));
+} __attribute__((packed));
 
-
-namespace LoRaConstants{
-    namespace pins{
+namespace LoRaConstants
+{
+    namespace pins
+    {
         constexpr uint8_t CS = 0;
         constexpr uint8_t RESET = 0;
         constexpr uint8_t IRQ = 0;
     }
-    namespace operationalConstants{
+    namespace operationalConstants
+    {
         constexpr int SPREADING_FACTOR = 7;
         constexpr long SIGNAL_BANDWITH = 250E3;
         constexpr int CODING_RATE = 5;
@@ -110,7 +148,8 @@ namespace LoRaConstants{
     }
 }
 
-namespace EspNowConstants{
+namespace EspNowConstants
+{
     constexpr uint8_t BROADCAST_ADDRESS[] = {0xE4, 0x65, 0xB8, 0xD8, 0x9C, 0x60};
     constexpr int WIFI_CHANNEL = 1;
     constexpr wifi_interface_t WIFI_INTERFACE = WIFI_IF_STA;
@@ -118,34 +157,56 @@ namespace EspNowConstants{
     constexpr wifi_power_t TX_POWER = WIFI_POWER_19_5dBm;
 }
 
-namespace ButtonArray{
-    namespace pins{
-        constexpr uint8_t L1= 13;
-        constexpr uint8_t L2 = 12;
-        constexpr uint8_t R1 = 14;
-        constexpr uint8_t R2 = 27;
+namespace ButtonArray
+{
+    namespace pins
+    {
+        constexpr uint8_t W = 26;
+        constexpr uint8_t A = 25;
+        constexpr uint8_t S = 27;
+        constexpr uint8_t D = 14;
+        constexpr uint8_t X = 13;
     }
-
-    namespace masks {
-        constexpr uint16_t L1       = (1 << 0); 
-        constexpr uint16_t L2   = (1 << 1); 
-        constexpr uint16_t R1 = (1 << 2); 
-        constexpr uint16_t R2   = (1 << 3); 
+    namespace masks
+    {
+        constexpr uint8_t W = 1 << 0;
+        constexpr uint8_t A = 1 << 1;
+        constexpr uint8_t S = 1 << 2;
+        constexpr uint8_t D = 1 << 3;
+        constexpr uint8_t X = 1 << 4;
+    }
+    namespace pressedStates
+    {
+        constexpr bool W = HIGH;
+        constexpr bool A = HIGH;
+        constexpr bool S = HIGH;
+        constexpr bool D = HIGH;
+        constexpr bool X = HIGH;
     }
 
     constexpr int DEBOUNCE_DELAY = 10;
 }
 
-typedef struct ButtonData{
-    bool l1;
-    bool l2;
-    bool r1;
-    bool r2;
+typedef struct ButtonData
+{
+    bool w;
+    bool a;
+    bool s;
+    bool d;
+    bool x;
 };
 
-typedef struct PeripheralPacket{
+typedef struct PeripheralPacket
+{
     JoystickData joy1;
     JoystickData joy2;
     ButtonData buttArr;
-    uint16_t potVal;
+    bool switchState;
 };
+
+namespace SliderConstants
+{
+    constexpr int PIN = 34;
+    constexpr int MIN = 0;
+    constexpr int MAX = 4095;
+}

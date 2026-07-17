@@ -1,13 +1,14 @@
 #include "joystick.h"
 #include "ControllerConfig.h"
 
-c_Joystick::c_Joystick(uint8_t x_pin, uint8_t y_pin, uint8_t switch_pin, int deadband, float filter_alpha, float expo_factor,int lowerLimit, int higherLimit): 
-    _x_pin(x_pin), _y_pin(y_pin), _switch_pin(switch_pin),
-    _deadband(deadband), _filter_alpha(filter_alpha), _expo_factor(expo_factor),
-    _lowerLimit(lowerLimit), _higherLimit(higherLimit){
+c_Joystick::c_Joystick(uint8_t x_pin, uint8_t y_pin, uint8_t switch_pin, int deadband, float filter_alpha, float expo_factor, int lowerLimit, int higherLimit) : _x_pin(x_pin), _y_pin(y_pin), _switch_pin(switch_pin),
+                                                                                                                                                                 _deadband(deadband), _filter_alpha(filter_alpha), _expo_factor(expo_factor),
+                                                                                                                                                                 _lowerLimit(lowerLimit), _higherLimit(higherLimit)
+{
 }
 
-void c_Joystick::init(){
+void c_Joystick::init()
+{
     pinMode(_x_pin, INPUT);
     pinMode(_y_pin, INPUT);
     pinMode(_switch_pin, INPUT);
@@ -16,23 +17,24 @@ void c_Joystick::init(){
     _baseline_y = _meanSample(_y_pin);
 }
 
-void c_Joystick::update(){
+void c_Joystick::update()
+{
     int raw_x = constrain(analogRead(_x_pin), _lowerLimit, _higherLimit);
     int raw_y = constrain(analogRead(_y_pin), _lowerLimit, _higherLimit);
 
-    _filtered_x = (_filter_alpha * raw_x) + ((1-_filter_alpha)* _filtered_x);
-    _filtered_y = (_filter_alpha * raw_y) + ((1-_filter_alpha)* _filtered_y);
+    _filtered_x = (_filter_alpha * raw_x) + ((1 - _filter_alpha) * _filtered_x);
+    _filtered_y = (_filter_alpha * raw_y) + ((1 - _filter_alpha) * _filtered_y);
 }
 
-
-JoystickData c_Joystick::getVals(){
+JoystickData c_Joystick::getVals()
+{
     JoystickData currentData;
 
-    //Gets devation from the center
+    // Gets devation from the center
     int x_dev = int(_filtered_x) - _baseline_x;
     int y_dev = int(_filtered_y) - _baseline_y;
 
-    //applies Dead Zone
+    // applies Dead Zone
     x_dev = abs(x_dev) > _deadband ? x_dev : 0;
     y_dev = abs(y_dev) > _deadband ? y_dev : 0;
 
@@ -41,30 +43,32 @@ JoystickData c_Joystick::getVals(){
     currentData.isPressed = digitalRead(_switch_pin);
 
     return currentData;
-
 }
 
-int c_Joystick::_meanSample(uint8_t sensPin){
+int c_Joystick::_meanSample(uint8_t sensPin)
+{
     int sum = 0;
     int start_t = millis();
 
-    for(int sampleCount= 0; sampleCount<JoystickConstants::operationalConstants::maxSampleCount; sampleCount++){
+    for (int sampleCount = 0; sampleCount < JoystickConstants::operationalConstants::MAX_SAMPLE_COUNT; sampleCount++)
+    {
 
-        sum+= constrain(analogRead(sensPin), _lowerLimit, _higherLimit);
-        if(millis()-start_t > JoystickConstants::operationalConstants::maxSampleDuration){
-            return int(sum/sampleCount);
+        sum += constrain(analogRead(sensPin), _lowerLimit, _higherLimit);
+        if (millis() - start_t > JoystickConstants::operationalConstants::MAX_SAMPLE_DURATION)
+        {
+            return int(sum / sampleCount);
         }
     }
 
-    return int(sum/JoystickConstants::operationalConstants::maxSampleCount);
-
+    return int(sum / JoystickConstants::operationalConstants::MAX_SAMPLE_COUNT);
 }
 
-int c_Joystick::_applyExpo(uint16_t val){
+int c_Joystick::_applyExpo(uint16_t val)
+{
 
-    float val_norm = val/_higherLimit;
-    
-    float expo_norm = (1- _expo_factor)*val_norm + _expo_factor*(val_norm*val_norm*val_norm);
+    float val_norm = val / _higherLimit;
+
+    float expo_norm = (1 - _expo_factor) * val_norm + _expo_factor * (val_norm * val_norm * val_norm);
 
     return uint16_t(expo_norm * _higherLimit);
 }
