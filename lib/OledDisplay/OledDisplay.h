@@ -16,8 +16,8 @@ public:
     void display_telemetry();
 
 private:
-    void _print_peripheral_labels() {}
-    void _print_telemetry_labels() {}
+    void _print_peripheral_labels();
+    void _print_telemetry_labels();
     TwoWire _i2c;
 
     PeripheralPacket _previous_peripheral;

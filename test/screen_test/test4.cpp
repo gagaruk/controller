@@ -1,51 +1,39 @@
-#include <Arduino.h>
-#include <unity.h>
 #include <Wire.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
-#include <ControllerConfig.h>
+#include "OledDisplay.h"
+#include "PeripheralManager.h"
+#include "ControllerConfig.h"
 
-Adafruit_SSD1306 display(displayConstants::SCREEN_WIDTH, displayConstants::SCREEN_HEIGHT, &Wire, -1); //[cite: 9]
+c_screen display = c_screen(Wire, displayConstants::REFRESH_INTERVAL_MS);
 
-void setUp(void) {}
-void tearDown(void) {}
+c_Joystick joy1 = c_Joystick(JoystickConstants::pins::JOY1_X, JoystickConstants::pins::JOY1_Y, JoystickConstants::pins::JOY1_S,
+                             JoystickConstants::operationalConstants::DEADBAND, JoystickConstants::operationalConstants::FILTER_ALPHA, JoystickConstants::operationalConstants::EXPO_FACTOR,
+                             JoystickConstants::operationalConstants::MAX_SAMPLE_COUNT, JoystickConstants::operationalConstants::MAX_SAMPLE_DURATION);
 
-void test_oled_begin(void)
-{
-    // Ensure the I2C wires are active
-    Wire.begin(i2cConstants::SDA, i2cConstants::SCL);
-    Wire.setClock(i2cConstants::CLOCK_SPEED);
+c_Joystick joy2 = c_Joystick(JoystickConstants::pins::JOY2_X, JoystickConstants::pins::JOY2_Y, JoystickConstants::pins::JOY2_S,
+                             JoystickConstants::operationalConstants::DEADBAND, JoystickConstants::operationalConstants::FILTER_ALPHA, JoystickConstants::operationalConstants::EXPO_FACTOR,
+                             JoystickConstants::operationalConstants::MAX_SAMPLE_COUNT, JoystickConstants::operationalConstants::MAX_SAMPLE_DURATION);
+c_ButtonArray buttonArray = c_ButtonArray(ButtonArray::pins::W, ButtonArray::pins::A, ButtonArray::pins::S, ButtonArray::pins::D, ButtonArray::pins::X);
 
-    // Verifies display can boot and claim its frame buffer memory[cite: 9]
-    bool success = display.begin(SSD1306_SWITCHCAPVCC, 0x3C); //[cite: 9]
-    TEST_ASSERT_TRUE_MESSAGE(success, "OLED panel failed allocation or was not detected on I2C address 0x3C");
-}
+c_PeripheralManager peripheralManager(&joy1, &joy2, &buttonArray, ButtonArray::pins::toggle);
 
-void test_oled_drawing(void)
-{
-    // Ensure we can clear, write text to, and push to display buffer without throwing driver panics[cite: 9]
-    display.clearDisplay();      //[cite: 9]
-    display.setTextSize(2);      //[cite: 9]
-    display.setTextColor(WHITE); //[cite: 9]
-    display.setCursor(10, 10);   //[cite: 9]
-    display.println("PASS");
-    display.display(); //[cite: 9]
-
-    TEST_ASSERT_TRUE(true);
-}
+PeripheralPacket data;
 
 void setup()
 {
+    Serial.begin(115200);
     delay(2000);
-    UNITY_BEGIN();
 
-    RUN_TEST(test_oled_begin);
-    RUN_TEST(test_oled_drawing);
-
-    UNITY_END();
+    peripheralManager.init();
+    Serial.println("--- Peripherals Initialized. Streaming Live Data Below ---");
+    display.init();
 }
 
 void loop()
 {
-    // Keep empty for Unity test runner
+
+    peripheralManager.updateVals();
+    peripheralManager.getVals(data);
+
+    display.update_peripheral_data(data);
+    display.display_peripheral();
 }
