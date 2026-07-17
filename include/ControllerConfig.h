@@ -74,9 +74,9 @@ namespace Loggerconstants
 
 typedef struct JoystickData
 {
-    int x_processed = 0;
-    int y_processed = 0;
-    bool isPressed = false;
+    int x = 0;
+    int y = 0;
+    bool sw = false;
 };
 
 namespace JoystickConstants
@@ -202,6 +202,7 @@ typedef struct PeripheralPacket
     JoystickData joy2;
     ButtonData buttArr;
     bool switchState;
+    IMUData imuData;
 };
 
 namespace SliderConstants
@@ -243,21 +244,21 @@ namespace imuConstants
         HZ_10,
         HZ_5
     };
-
-    struct vector3
-    {
-        float x;
-        float y;
-        float z;
-    };
-
-    typedef struct IMUData
-    {
-        vector3 gyro;
-        vector3 accel;
-        vector3 mag;
-    } IMUData_t;
 }
+
+struct vector3
+{
+    float x;
+    float y;
+    float z;
+};
+
+typedef struct IMUData
+{
+    vector3 gyro;
+    vector3 accel;
+    vector3 mag;
+};
 
 namespace i2cConstants
 {
@@ -270,4 +271,10 @@ namespace loopConstants
 {
     static constexpr uint FAST_LOOP_TIME_us = 10000;
     static constexpr uint SLOW_LOOP_TIME_us = 50000;
+}
+
+namespace displayConstants
+{
+    static constexpr int SCREEN_WIDTH = 128;
+    static constexpr int SCREEN_HEIGHT = 64;
 }

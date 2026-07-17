@@ -38,9 +38,9 @@ JoystickData c_Joystick::getVals()
     x_dev = abs(x_dev) > _deadband ? x_dev : 0;
     y_dev = abs(y_dev) > _deadband ? y_dev : 0;
 
-    currentData.x_processed = _applyExpo(x_dev);
-    currentData.y_processed = _applyExpo(y_dev);
-    currentData.isPressed = digitalRead(_switch_pin);
+    currentData.x = _applyExpo(x_dev);
+    currentData.y = _applyExpo(y_dev);
+    currentData.sw = digitalRead(_switch_pin);
 
     return currentData;
 }

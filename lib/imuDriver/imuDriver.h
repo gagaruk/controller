@@ -8,7 +8,7 @@ class c_imu
 {
 private:
     TwoWire *_i2c;
-    imuConstants::IMUData_t _data;
+    IMUData _data;
 
     imuConstants::ACCEL_RANGE _accelRange;
     imuConstants::GYRO_RANGE _gyroRange;
@@ -31,5 +31,5 @@ public:
     void processMPUVals();
     void readMagVals();
     void processMagVals();
-    imuConstants::IMUData_t getData();
+    IMUData getData();
 };
