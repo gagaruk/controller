@@ -7,21 +7,29 @@ c_imu::c_imu(imuConstants::ACCEL_RANGE accelRange, imuConstants::GYRO_RANGE gyro
 {
 }
 
-void c_imu::init()
+bool c_imu::init()
 {
-    _writeToDevice(imuConstants::POWER_ADDR, imuConstants::POWER_ADDR, 0x00);
-    delay(30);
+    try
+    {
+        _writeToDevice(imuConstants::POWER_ADDR, imuConstants::POWER_ADDR, 0x00);
+        delay(30);
 
-    uint8_t gyroConfig = _translateGyroRange();
-    _writeToDevice(imuConstants::MPU_ADDR, 0x1B, gyroConfig);
+        uint8_t gyroConfig = _translateGyroRange();
+        _writeToDevice(imuConstants::MPU_ADDR, 0x1B, gyroConfig);
 
-    uint8_t accelConfig = _translateAccelRange();
-    _writeToDevice(imuConstants::MPU_ADDR, 0x1C, accelConfig);
+        uint8_t accelConfig = _translateAccelRange();
+        _writeToDevice(imuConstants::MPU_ADDR, 0x1C, accelConfig);
 
-    uint8_t dlpfConfig = _translateDlpfBits();
-    _writeToDevice(imuConstants::MPU_ADDR, imuConstants::CONFIG_ADDR, dlpfConfig);
+        uint8_t dlpfConfig = _translateDlpfBits();
+        _writeToDevice(imuConstants::MPU_ADDR, imuConstants::CONFIG_ADDR, dlpfConfig);
 
-    _initMagnetometer();
+        _initMagnetometer();
+        return true;
+    }
+    catch (...)
+    {
+        return false;
+    }
 }
 void c_imu::readMPUVals()
 {
@@ -79,9 +87,9 @@ void c_imu::processMagVals()
     _data.mag.z *= _magScaleDividerZ;
 }
 
-imuConstants::IMUData_t c_imu::getData()
+IMUData c_imu::getData()
 {
-    imuConstants::IMUData_t latestData = _data;
+    IMUData latestData = _data;
     return latestData;
 }
 

@@ -26,7 +26,7 @@ private:
 
 public:
     c_imu(imuConstants::ACCEL_RANGE accelRange, imuConstants::GYRO_RANGE gyroRange, imuConstants::DLPF_FREQ dlpfFreq, TwoWire *i2c);
-    void init();
+    bool init();
     void readMPUVals();
     void processMPUVals();
     void readMagVals();

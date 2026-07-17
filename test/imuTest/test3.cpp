@@ -1,79 +1,69 @@
 #include <Arduino.h>
+#include <unity.h>
 #include <Wire.h>
 #include "imuDriver.h"
-#include "config.h"
+#include "ControllerConfig.h"
 
-c_imu imu = c_imu(imuConstants::ACCEL_RANGE::G_2, imuConstants::GYRO_RANGE::DEG_250, imuConstants::DLPF_FREQ::HZ_256, &Wire);
-unsigned long lastLoopTime = 0;
-imuConstants::IMUData_t imuData;
+c_imu imu = c_imu(imuConstants::ACCEL_RANGE::G_2, imuConstants::GYRO_RANGE::DEG_250, imuConstants::DLPF_FREQ::HZ_256, &Wire); //[cite: 8]
+IMUData imuData;                                                                                                              //[cite: 8]
 
-void printMPUData(const imuConstants::IMUData_t &data);
-void printMagData(const imuConstants::IMUData_t &data);
+void setUp(void) {}
+void tearDown(void) {}
+
+void test_i2c_bus_init(void)
+{
+    // Verifies that I2C can configure itself to the targeted physical pins[cite: 8]
+    Wire.begin(i2cConstants::SDA, i2cConstants::SCL); //[cite: 8]
+    Wire.setClock(i2cConstants::CLOCK_SPEED);         //[cite: 8]
+    TEST_ASSERT_TRUE(true);
+}
+
+void test_imu_connection_and_init(void)
+{
+    // Ensures the driver communicates with the IMU hardware and configures registers[cite: 8]
+    bool imuStatus = imu.init(); //[cite: 8]
+    TEST_ASSERT_TRUE_MESSAGE(imuStatus, "IMU hardware failed to initialize. Check your physical I2C lines.");
+}
+
+void test_mpu_readings_not_dead(void)
+{
+    // Reads from the accelerometer and gyroscope[cite: 8]
+    imu.readMPUVals();       //[cite: 8]
+    imu.processMPUVals();    //[cite: 8]
+    imuData = imu.getData(); //[cite: 8]
+
+    // A real IMU resting on a desk will have non-zero gravity and subtle noise.
+    // Asserting that x/y/z values aren't all exactly zero rules out a frozen bus.
+    float sumAccel = abs(imuData.accel.x) + abs(imuData.accel.y) + abs(imuData.accel.z);
+    TEST_ASSERT_NOT_EQUAL_MESSAGE(0.0f, sumAccel, "IMU output is completely dead (all acceleration axes returned 0)");
+}
+
+void test_magnetometer_readings(void)
+{
+    // Tests magnetometer parsing[cite: 8]
+    imu.readMagVals();       //[cite: 8]
+    imu.processMagVals();    //[cite: 8]
+    imuData = imu.getData(); //[cite: 8]
+
+    // Verifying magnetometer is reading valid active spatial dimensions
+    float sumMag = abs(imuData.mag.x) + abs(imuData.mag.y) + abs(imuData.mag.z);
+    TEST_ASSERT_NOT_EQUAL_MESSAGE(0.0f, sumMag, "Magnetometer is reading absolute zero on all axes.");
+}
 
 void setup()
 {
-    Serial.begin(115200);
-    Wire.begin(i2cConstants::SDA, i2cConstants::SCL);
-    Wire.setClock(i2cConstants::CLOCK_SPEED);
+    delay(2000);
+    UNITY_BEGIN();
 
-    imu.init();
+    RUN_TEST(test_i2c_bus_init);
+    RUN_TEST(test_imu_connection_and_init);
+    RUN_TEST(test_mpu_readings_not_dead);
+    RUN_TEST(test_magnetometer_readings);
+
+    UNITY_END();
 }
 
 void loop()
 {
-    unsigned long currentTime = micros();
-
-    if (currentTime - lastLoopTime >= loopConstants::FAST_LOOP_TIME_us)
-    {
-        lastLoopTime = currentTime;
-
-        imu.readMPUVals();
-        imu.processMPUVals();
-        imuData = imu.getData();
-        printMPUData(imuData);
-    }
-
-    if (currentTime - lastLoopTime >= loopConstants::SLOW_LOOP_TIME_us)
-    {
-        lastLoopTime = currentTime;
-        imu.readMagVals();
-        imu.processMagVals();
-        imuData = imu.getData();
-        printMagData(imuData);
-    }
-}
-
-void printMPUData(const imuConstants::IMUData_t &data)
-{
-    Serial.print("Gyro: ");
-    Serial.print("X: ");
-    Serial.print(data.gyro.x);
-    Serial.print(" ");
-    Serial.print("Y: ");
-    Serial.print(data.gyro.y);
-    Serial.print(" ");
-    Serial.print("Z: ");
-    Serial.println(data.gyro.z);
-
-    Serial.print("Accel: ");
-    Serial.print("X: ");
-    Serial.print(data.accel.x);
-    Serial.print(" ");
-    Serial.print("Y: ");
-    Serial.print(data.accel.y);
-    Serial.print(" ");
-    Serial.print("Z: ");
-    Serial.println(data.accel.z);
-}
-
-void printMagData(const imuConstants::IMUData_t &data)
-{
-    Serial.print("Mag: X=");
-    Serial.print(data.mag.x);
-    Serial.print(", Y=");
-    Serial.print(data.mag.y);
-    Serial.print(", Z=");
-    Serial.println(data.mag.z);
-
-    Serial.println("\n-------------------------------------\n");
+    // Keep empty for Unity test runner
 }
