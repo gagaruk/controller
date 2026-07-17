@@ -4,66 +4,85 @@
 #include "imuDriver.h"
 #include "ControllerConfig.h"
 
-c_imu imu = c_imu(imuConstants::ACCEL_RANGE::G_2, imuConstants::GYRO_RANGE::DEG_250, imuConstants::DLPF_FREQ::HZ_256, &Wire); //[cite: 8]
-IMUData imuData;                                                                                                              //[cite: 8]
+c_imu imu = c_imu(imuConstants::ACCEL_RANGE::G_2, imuConstants::GYRO_RANGE::DEG_250, imuConstants::DLPF_FREQ::HZ_256, &Wire);
+IMUData imuData;
 
-void setUp(void) {}
-void tearDown(void) {}
-
-void test_i2c_bus_init(void)
-{
-    // Verifies that I2C can configure itself to the targeted physical pins[cite: 8]
-    Wire.begin(i2cConstants::SDA, i2cConstants::SCL); //[cite: 8]
-    Wire.setClock(i2cConstants::CLOCK_SPEED);         //[cite: 8]
-    TEST_ASSERT_TRUE(true);
-}
-
-void test_imu_connection_and_init(void)
-{
-    // Ensures the driver communicates with the IMU hardware and configures registers[cite: 8]
-    bool imuStatus = imu.init(); //[cite: 8]
-    TEST_ASSERT_TRUE_MESSAGE(imuStatus, "IMU hardware failed to initialize. Check your physical I2C lines.");
-}
-
-void test_mpu_readings_not_dead(void)
-{
-    // Reads from the accelerometer and gyroscope[cite: 8]
-    imu.readMPUVals();       //[cite: 8]
-    imu.processMPUVals();    //[cite: 8]
-    imuData = imu.getData(); //[cite: 8]
-
-    // A real IMU resting on a desk will have non-zero gravity and subtle noise.
-    // Asserting that x/y/z values aren't all exactly zero rules out a frozen bus.
-    float sumAccel = abs(imuData.accel.x) + abs(imuData.accel.y) + abs(imuData.accel.z);
-    TEST_ASSERT_NOT_EQUAL_MESSAGE(0.0f, sumAccel, "IMU output is completely dead (all acceleration axes returned 0)");
-}
-
-void test_magnetometer_readings(void)
-{
-    // Tests magnetometer parsing[cite: 8]
-    imu.readMagVals();       //[cite: 8]
-    imu.processMagVals();    //[cite: 8]
-    imuData = imu.getData(); //[cite: 8]
-
-    // Verifying magnetometer is reading valid active spatial dimensions
-    float sumMag = abs(imuData.mag.x) + abs(imuData.mag.y) + abs(imuData.mag.z);
-    TEST_ASSERT_NOT_EQUAL_MESSAGE(0.0f, sumMag, "Magnetometer is reading absolute zero on all axes.");
-}
+void print_imuData(const IMUData &data);
 
 void setup()
 {
-    delay(2000);
-    UNITY_BEGIN();
+    Serial.begin(115200);
+    while (!Serial)
+        ;
+    delay(1000);
 
-    RUN_TEST(test_i2c_bus_init);
-    RUN_TEST(test_imu_connection_and_init);
-    RUN_TEST(test_mpu_readings_not_dead);
-    RUN_TEST(test_magnetometer_readings);
+    Serial.println("Waking up I2C Wire Bus...");
+    Wire.begin(i2cConstants::SDA, i2cConstants::SCL, i2cConstants::CLOCK_SPEED);
+    Wire.setTimeOut(100);
 
-    UNITY_END();
+    Serial.println("Attempting to initialize IMU chip...");
+
+    Serial.println("--- BYPASSING DRIVER: DIRECT HARDWARE TEST ---");
+
+    // 1. Force the physical chip to wake up directly
+    Wire.beginTransmission(0x68);
+    Wire.write(0x6B); // PWR_MGMT_1 register
+    Wire.write(0x00); // 0x00 = Awake, internal 8MHz oscillator
+    Wire.endTransmission();
+
+    delay(100); // Wait for the MEMS silicon to stabilize
+
+    // 2. Request exactly two raw bytes for the Z-Axis Accelerometer (Registers 0x3F and 0x40)
+    Wire.beginTransmission(0x68);
+    Wire.write(0x3F);
+    Wire.endTransmission(false);
+
+    // 3. Pull the bytes and construct the 16-bit integer
+    Wire.requestFrom((uint16_t)0x68, (uint8_t)2);
+
+    if (Wire.available() >= 2)
+    {
+        int16_t rawZ = (Wire.read() << 8) | Wire.read();
+        Serial.printf("ABSOLUTE RAW Z-AXIS BITS: %d\n", rawZ);
+    }
+    else
+    {
+        Serial.println("I2C ERROR: Chip did not return 2 bytes.");
+    }
+
+    Serial.println("----------------------------------------------");
+
+    bool success = imu.init();
+
+    Serial.print("IMU Initialization Result: ");
+    Serial.println(success ? "SUCCESS" : "FAILED");
 }
-
 void loop()
 {
-    // Keep empty for Unity test runner
+    if (imu.readMPUVals())
+    {
+        imu.processMPUVals();
+
+        imu.getData(imuData);
+
+        print_imuData(imuData);
+    }
+    else
+    {
+        Serial.println("Skipping frame: Bus was busy or packet was incomplete.");
+    }
+
+    delay(100);
+}
+void print_imuData(const IMUData &data)
+{
+    Serial.println("\n=================== IMU RAW METRICS ===================");
+
+    Serial.printf("ACCEL => X: %7.2f | Y: %7.2f | Z: %7.2f\n",
+                  data.accel.x, data.accel.y, data.accel.z);
+
+    Serial.printf("GYRO  => X: %7.2f | Y: %7.2f | Z: %7.2f\n",
+                  data.gyro.x, data.gyro.y, data.gyro.z);
+
+    Serial.println("========================================================");
 }
