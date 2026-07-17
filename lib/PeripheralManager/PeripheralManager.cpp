@@ -17,9 +17,9 @@ void c_PeripheralManager::updateVals()
     _buttArr->update();
 
     _peripheralPacket.joy1 = _joy1->getVals();
-    LOG_JOYSTICK(_peripheralPacket.joy1.x_processed, _peripheralPacket.joy1.y_processed);
+    LOG_JOYSTICK(_peripheralPacket.joy1.x, _peripheralPacket.joy1.y);
     _peripheralPacket.joy2 = _joy2->getVals();
-    LOG_JOYSTICK(_peripheralPacket.joy2.x_processed, _peripheralPacket.joy2.y_processed);
+    LOG_JOYSTICK(_peripheralPacket.joy2.x, _peripheralPacket.joy2.y);
     _peripheralPacket.buttArr = _buttArr->getPressedStruct();
     LOG_BUTTONS(_peripheralPacket.buttArr.w, _peripheralPacket.buttArr.a, _peripheralPacket.buttArr.s, _peripheralPacket.buttArr.d, _peripheralPacket.buttArr.x);
     _peripheralPacket.switchState = digitalRead(_switchPin);

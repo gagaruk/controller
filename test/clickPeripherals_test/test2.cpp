@@ -31,8 +31,8 @@ c_Joystick joy2 = c_Joystick(JoystickConstants::pins::JOY2_X, JoystickConstants:
 
 c_ButtonArray buttons = c_ButtonArray(ButtonArray::pins::W, ButtonArray::pins::A, ButtonArray::pins::S, ButtonArray::pins::D, ButtonArray::pins::X); //[cite: 7]
 
-c_PeripheralManager peripheralManager = c_PeripheralManager(&joy1, &joy2, &buttons, SliderConstants::PIN); //[cite: 7]
-c_EspNowManager espNowManager = c_EspNowManager();                                                         //[cite: 7]
+c_PeripheralManager peripheralManager = c_PeripheralManager(&joy1, &joy2, &buttons, ButtonArray::pins::toggle); //[cite: 7]
+c_EspNowManager espNowManager = c_EspNowManager();                                                              //[cite: 7]
 
 PeripheralPacket peripheralPacket; //[cite: 7]
 
@@ -99,7 +99,7 @@ void loop()
 }
 c_ButtonArray buttons = c_ButtonArray(ButtonArray::pins::W, ButtonArray::pins::A, ButtonArray::pins::S, ButtonArray::pins::D, ButtonArray::pins::X);
 
-c_PeripheralManager peripheralManager = c_PeripheralManager(&joy1, &joy2, &buttons, SliderConstants::PIN);
+c_PeripheralManager peripheralManager = c_PeripheralManager(&joy1, &joy2, &buttons, ButtonArray::pins::toggle);
 
 c_EspNowManager espNowManager = c_EspNowManager();
 

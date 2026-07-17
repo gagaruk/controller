@@ -1,9 +1,6 @@
 #pragma once
 #include <Arduino.h>
-#include "LogBuffer.h"
 #include <WiFi.h>
-
-extern c_logBuffer logBuffer;
 
 /////////////////////////////////// Logger //////////////////////////////////////////////////////
 #define CONTROLLER_DEBUG 1
@@ -46,9 +43,9 @@ extern c_logBuffer logBuffer;
     do                     \
     {                      \
     } while (0)
-#define LOG_BUTTONS(l1, l2, r1, r2) \
-    do                              \
-    {                               \
+#define LOG_BUTTONS(w, a, s, d, x) \
+    do                             \
+    {                              \
     } while (0)
 #define LOG_SWITCH(state) \
     do                    \
@@ -64,15 +61,15 @@ extern c_logBuffer logBuffer;
     } while (0)
 #endif
 
-namespace Loggerconstants
+namespace LoggerConstants
 {
-    constexpr int BUFFERS_SIZE = 0;
-    constexpr int INTERVAL = 0;
+    static constexpr int BUFFER_SIZE = 15;
 }
-
+#include "LogBuffer.h"
+extern c_logBuffer logBuffer;
 ////////////////////////////////////// Joystick /////////////////////////////////////////////////
 
-typedef struct JoystickData
+struct JoystickData
 {
     int x = 0;
     int y = 0;
@@ -85,20 +82,20 @@ namespace JoystickConstants
     {
         constexpr uint8_t JOY1_X = 36;
         constexpr uint8_t JOY1_Y = 39;
-        constexpr uint8_t JOY1_S = 0;
+        constexpr uint8_t JOY1_S = 32;
 
         constexpr uint8_t JOY2_X = 34;
         constexpr uint8_t JOY2_Y = 35;
-        constexpr uint8_t JOY2_S = 0;
+        constexpr uint8_t JOY2_S = 33;
     }
 
     namespace operationalConstants
     {
-        constexpr int DEADBAND = 0;
-        constexpr float FILTER_ALPHA = 0;
-        constexpr float EXPO_FACTOR = 0;
-        constexpr int MAX_SAMPLE_COUNT = 0;
-        constexpr int MAX_SAMPLE_DURATION = 0;
+        constexpr int DEADBAND = 10;
+        constexpr float FILTER_ALPHA = 0.1;
+        constexpr float EXPO_FACTOR = 0.2;
+        constexpr int MAX_SAMPLE_COUNT = 16;
+        constexpr int MAX_SAMPLE_DURATION = 50;
     }
 }
 
@@ -125,11 +122,11 @@ struct SystemStatus
     uint8_t errorCode;
 };
 
-typedef struct TelemetryPacket
+struct TelemetryPacket
 {
     OdometryData odometry;
     SystemStatus status;
-} __attribute__((packed));
+};
 
 namespace LoRaConstants
 {
@@ -166,6 +163,7 @@ namespace ButtonArray
         constexpr uint8_t S = 27;
         constexpr uint8_t D = 14;
         constexpr uint8_t X = 13;
+        constexpr uint8_t toggle = 16;
     }
     namespace masks
     {
@@ -187,7 +185,7 @@ namespace ButtonArray
     constexpr int DEBOUNCE_DELAY = 10;
 }
 
-typedef struct ButtonData
+struct ButtonData
 {
     bool w;
     bool a;
@@ -195,22 +193,6 @@ typedef struct ButtonData
     bool d;
     bool x;
 };
-
-typedef struct PeripheralPacket
-{
-    JoystickData joy1;
-    JoystickData joy2;
-    ButtonData buttArr;
-    bool switchState;
-    IMUData imuData;
-};
-
-namespace SliderConstants
-{
-    constexpr int PIN = 34;
-    constexpr int MIN = 0;
-    constexpr int MAX = 4095;
-}
 
 namespace imuConstants
 {
@@ -253,24 +235,33 @@ struct vector3
     float z;
 };
 
-typedef struct IMUData
+struct IMUData
 {
     vector3 gyro;
     vector3 accel;
     vector3 mag;
 };
 
+struct PeripheralPacket
+{
+    JoystickData joy1;
+    JoystickData joy2;
+    ButtonData buttArr;
+    bool switchState;
+    IMUData imuData;
+};
+
 namespace i2cConstants
 {
-    static constexpr uint8_t SDA = 26;
-    static constexpr uint8_t SCL = 25;
+    static constexpr uint8_t SDA = 21;
+    static constexpr uint8_t SCL = 22;
     static constexpr unsigned long CLOCK_SPEED = 400000;
 }
 
 namespace loopConstants
 {
-    static constexpr uint FAST_LOOP_TIME_us = 10000;
-    static constexpr uint SLOW_LOOP_TIME_us = 50000;
+    static constexpr int FAST_LOOP_TIME_us = 10000;
+    static constexpr int SLOW_LOOP_TIME_us = 50000;
 }
 
 namespace displayConstants

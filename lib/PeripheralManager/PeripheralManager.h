@@ -1,8 +1,8 @@
 #pragma once
 
 #include "ControllerConfig.h"
-#include "Joystick.cpp"
-#include "ButtonArray.cpp"
+#include "Joystick.h"
+#include "ButtonArray.h"
 
 class c_PeripheralManager
 {

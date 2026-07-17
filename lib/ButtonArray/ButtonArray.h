@@ -5,7 +5,7 @@
 class c_ButtonArray
 {
 public:
-    c_ButtonArray(uint8_t W_pin, uint8_t A_pin, uint8_t S_pin, uint8_t D_pin, uint8_t X_pin) {}
+    c_ButtonArray(uint8_t W_pin, uint8_t A_pin, uint8_t S_pin, uint8_t D_pin, uint8_t X_pin);
     void init();
     void update();
 
