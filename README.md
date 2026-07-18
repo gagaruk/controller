@@ -1,7 +1,7 @@
 # Universal Remote Controller -V1
 ## Remote controller that would be suitable for many RC hobby projects
 
---photo
+<img width="3388" height="2661" alt="IMG_0222E" src="https://github.com/user-attachments/assets/44e34111-aa25-4a0f-ade2-b18c19492619" />
 
 ## Schematic
 
