@@ -1,1 +1,25 @@
-Materials, Units, Cost_per_Unit, Total
+Materials, Units, Cost_per_Unit ($),Cost ($)
+Ra-01 433MHz LoRaWAN Module with Bow Antenna,1,6.81,6.81
+nRF24L01+ PA 2.4GHz Wireless Module,1,3.01,3.01
+CP2102 Micro USB 2.0 UART TTL Serial Converter for Arduino Module,1,2.55,2.55
+ESP32-WROOM-32U Wifi Bluetooth Development Board,1,7.23,7.23
+2400MHz Wifi Antenna 3dBi 23cm IPX,1,0.48,0.48
+LM2596 Adjustable Voltage Step-Down Power Module (4-35V Input - 1-30V Output),1,1.02,1.02
+MPU6050 6-Axis Gyro and Tilt Sensor,1,1.81,1.81
+6x6 5mm Tach Button (2 Pins,4,0.04,0.16
+12x12 7.3mm Tact Switch,1,0.05,0.05
+Sliding On/Off Switch 180 Degrees 4.7mm,1,0.24,0.24
+Arduino XY Joystick Module,2,0.66,1.32
+"0.96"" 128x64 4 Pin OLED Graphic LCD Screen - SSD1306 - I2C White",1,3.37,3.37
+4-cell AA Battery Compartment with Cover and Switch,1,0.82,0.82
+0R 1/4W Resistor,10,0.0036057,0.036057
+Jumper Cables,1,0.82,0.82
+100uF 50V Capacitor 5x7mm (Dielectric),1,0.04,0.04
+10uF 50V Capacitor 2.5mm 5x7mm,6,0.03,0.18
+100NF 100V Ceramic Capacitor,11,0.04,0.44
+1x40 Female Header (2.54mm) - 10.9 mm,1,0.78,0.78
+1.2mm Tube Solder 25gr,1,5.96,5.96
+,,,
+,,Total Cost:,37.126057
+,,,
+,,,
