@@ -3,6 +3,8 @@
 #include "PeripheralManager.h"
 #include "ControllerConfig.h"
 
+c_logBuffer logBuffer;
+
 c_screen display = c_screen(Wire, displayConstants::REFRESH_INTERVAL_MS);
 
 c_Joystick joy1 = c_Joystick(JoystickConstants::pins::JOY1_X, JoystickConstants::pins::JOY1_Y, JoystickConstants::pins::JOY1_S,
@@ -22,6 +24,8 @@ void setup()
 {
     Serial.begin(115200);
     delay(2000);
+
+    Wire.begin(17, 4);
 
     peripheralManager.init();
     Serial.println("--- Peripherals Initialized. Streaming Live Data Below ---");

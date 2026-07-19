@@ -1,9 +1,11 @@
-#include <Arduino.h>
+#include <Wire.h>
+#include "OledDisplay.h"
 #include "PeripheralManager.h"
 #include "ControllerConfig.h"
-#include "EspNowManager.h"
 
 c_logBuffer logBuffer;
+
+c_screen display = c_screen(Wire, displayConstants::REFRESH_INTERVAL_MS);
 
 c_Joystick joy1 = c_Joystick(JoystickConstants::pins::JOY1_X, JoystickConstants::pins::JOY1_Y, JoystickConstants::pins::JOY1_S,
                              JoystickConstants::operationalConstants::DEADBAND, JoystickConstants::operationalConstants::FILTER_ALPHA, JoystickConstants::operationalConstants::EXPO_FACTOR,
@@ -16,22 +18,26 @@ c_ButtonArray buttonArray = c_ButtonArray(ButtonArray::pins::W, ButtonArray::pin
 
 c_PeripheralManager peripheralManager(&joy1, &joy2, &buttonArray, ButtonArray::pins::toggle);
 
-c_EspNowManager nowTranciever = c_EspNowManager();
-
 PeripheralPacket data;
 
 void setup()
 {
     Serial.begin(115200);
     delay(2000);
+
+    Wire.begin(17, 4);
+
     peripheralManager.init();
-    nowTranciever.init(EspNowConstants::WIFI_CHANNEL, EspNowConstants::BROADCAST_ADDRESS);
+    Serial.println("--- Peripherals Initialized. Streaming Live Data Below ---");
+    display.init();
 }
 
 void loop()
 {
+
     peripheralManager.updateVals();
     peripheralManager.getVals(data);
 
-    nowTranciever.sendData(EspNowConstants::BROADCAST_ADDRESS, &data, sizeof(data));
+    display.update_peripheral_data(data);
+    display.display_peripheral();
 }

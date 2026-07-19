@@ -8,7 +8,7 @@
 class c_screen
 {
 public:
-    c_screen(const TwoWire &i2c, uint refresInterval);
+    c_screen(TwoWire &i2c, uint refresInterval);
     void init();
     void update_peripheral_data(const PeripheralPacket &new_data);
     void update_telemetry_data(const TelemetryPacket &new_data);
@@ -18,7 +18,7 @@ public:
 private:
     void _print_peripheral_labels();
     void _print_telemetry_labels();
-    TwoWire _i2c;
+    TwoWire *_i2c;
 
     PeripheralPacket _previous_peripheral;
     TelemetryPacket _previous_telemetry;
