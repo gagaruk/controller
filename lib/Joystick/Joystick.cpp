@@ -1,4 +1,4 @@
-#include "joystick.h"
+#include "Joystick.h"
 #include "ControllerConfig.h"
 
 c_Joystick::c_Joystick(uint8_t x_pin, uint8_t y_pin, uint8_t switch_pin, int deadband, float filter_alpha, float expo_factor, int lowerLimit, int higherLimit)
